@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Wealthsimple ROI Analyzer",
+  "version": "1.0.0",
+  "description": "Advanced return on investment graphs for Wealthsimple accounts",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "cookies"
+  ],
+  "host_permissions": [
+    "https://wealthsimple.com/*",
+    "https://*.wealthsimple.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://wealthsimple.com/*", "https://*.wealthsimple.com/*"],
+      "js": ["wealthsimple_api.js", "chart.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "64": "icons/icons8-graph-64.png"
+    }
+  },
+  "icons": {
+      "64": "icons/icons8-graph-64.png"
+  }
+}
+

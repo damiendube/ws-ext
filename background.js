@@ -51,8 +51,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           accountIds = accounts.map(account => account.id);
         }
         
+        // Get Last year start date str
+        let today = new Date(); 
+        today.setDate(today.getDate() - 366);
+        const lastYearStartDate_str = today.toISOString().split('T')[0];
         // Call the API method (note: start_date should be a Date object or ISO string)
-        const data = await api.get_identity_historical_financials(accountIds, 'CAD', '2025-01-01');
+        const data = await api.get_identity_historical_financials(accountIds, 'CAD', lastYearStartDate_str);
         const rollingWindow = request.rollingWindow || 30; // Default to 30 (monthly) if not provided
         return processROIData(data, rollingWindow);
       })
@@ -133,12 +137,6 @@ function getGraphQLEndpoint(domain) {
 
   // Fallback: use the same domain
   return `https://${domain}/graphql`;
-}
-
-function buildROIQuery() {
-  // GraphQL query to fetch ROI data
-  // This needs to be customized based on Wealthsimple's actual GraphQL schema
-  return "{\"operationName\":\"FetchAccountCombinedNlv\",\"variables\":{\"ids\":[\"rrsp-o5ecxxbo\",\"tfsa-gzguzdfz\",\"non-registered-dac4_7ym\",\"group-rrsp-ylbehz-n\",\"ca-cash-msb-i5C5bJCn6g\",\"non-registered-rrvdqm6h\",\"ca-cash-msb-gVU38qfIew\",\"ca-credit-card-RnGec1MeWg\",\"non-registered-crypto-GCqXGXSnsA\"]},\"query\":\"query FetchAccountCombinedNlv($ids: [String!]!, $currency: Currency) {\\n  accounts(ids: $ids) {\\n    id\\n    financials {\\n      currentCombined(currency: $currency) {\\n        id\\n        netLiquidationValueV2 {\\n          ...Money\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment Money on Money {\\n  amount\\n  cents\\n  currency\\n  __typename\\n}\"}";
 }
 
 function processROIData(data, rollingWindow = 30) {

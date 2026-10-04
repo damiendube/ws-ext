@@ -1,9 +1,4 @@
 # Icons
 
-Place your extension icons here:
-- `icon16.png` (16x16 pixels)
-- `icon48.png` (48x48 pixels)
-- `icon128.png` (128x128 pixels)
-
-You can create these icons using any image editor or online icon generator.
+`icons8-graph-64.png` is a graph icon from Icons8, used under their free license. A link to https://icons8.com is in the extension popup and in the project README.
 

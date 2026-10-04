@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "Chrome extension for advanced ROI graphs on Wealthsimple accounts",
   "scripts": {
-    "build": "echo 'No build step required for basic extension'",
-    "package": "zip -r wealthsimple-roi-analyzer.zip . -x '*.git*' 'node_modules/*' '*.zip' 'package.json' 'README.md'"
+    "build": "rm -rf dist && mkdir dist && cp manifest.json background.js popup.html popup.css popup.js wealthsimple_api.js LICENSE NOTICE dist/ && cp -R icons dist/ && cp node_modules/chart.js/dist/chart.umd.js dist/chart.js",
+    "package": "npm run build && cd dist && zip -r ../wealthsimple-roi-analyzer.zip ."
+  },
+  "dependencies": {
+    "chart.js": "4.4.0"
   },
   "keywords": [
     "chrome-extension",
@@ -13,6 +16,6 @@
     "investment"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "GPL-3.0-or-later"
 }
 

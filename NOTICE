@@ -1,0 +1,35 @@
+Third-party notices for Wealthsimple ROI Analyzer
+==================================================
+
+This extension as a whole is licensed under the GNU General Public
+License, version 3 or later. See LICENSE.
+
+wealthsimple_api.js
+-------------------
+
+JavaScript port of ws-api (ws_api/wealthsimple_api.py).
+
+Copyright (C) Guillaume Boudreau <guillaume@pommepause.com>
+https://github.com/gboudreau/ws-api-python
+
+Licensed under the GNU General Public License, version 3 or later.
+Modified 2025: converted from Python to JavaScript.
+
+chart.js
+--------
+
+Chart.js v4.4.0 is an npm dependency, copied into the extension bundle
+from node_modules/chart.js/dist/chart.umd.js. It remains under the MIT
+License. The MIT terms are compatible with distributing this extension
+under the GPL. The Chart.js copyright and MIT notice at the top of the
+bundled chart.js file are left unchanged.
+
+Copyright (c) 2023 Chart.js Contributors
+https://www.chartjs.org
+
+icons/icons8-graph-64.png
+--------------------------
+
+Graph icon by Icons8 (https://icons8.com), used under the Icons8 free
+license, which requires a visible link to Icons8. That link is in the
+extension popup and in README.md.

@@ -18,7 +18,7 @@
   "content_scripts": [
     {
       "matches": ["https://wealthsimple.com/*", "https://*.wealthsimple.com/*"],
-      "js": ["wealthsimple_api.js", "chart.js"],
+      "js": ["wealthsimple_api.js"],
       "run_at": "document_idle"
     }
   ],

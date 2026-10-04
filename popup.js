@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function displayChart(data) {
   // Check if Chart.js is loaded
   if (typeof Chart === 'undefined') {
-    showError('Chart.js library failed to load. Please check your internet connection or reload the extension.');
+    showError('Chart.js library failed to load. Rebuild the extension with npm run build.');
     console.error('Chart.js is not available');
     return;
   }

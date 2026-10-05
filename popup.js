@@ -345,20 +345,35 @@ function displayRoiChart(data) {
   const positive = headline == null || headline >= 0;
   const line = positive ? '#047857' : '#b42318';
   const fill = positive ? 'rgba(4, 120, 87, 0.12)' : 'rgba(180, 35, 24, 0.12)';
+  const up = '#047857';
+  const down = '#b42318';
   const monthly = selectedReturnType === 'monthly';
-  const datasets = [{
-    label: monthly ? 'Month' : 'Return',
-    data: values,
-    borderColor: line,
-    backgroundColor: fill,
-    borderWidth: 2,
-    pointRadius: !monthly || values.length > 24 ? (values.length > 1 ? 0 : 4) : 3,
-    pointHoverRadius: 4,
-    tension: 0,
-    fill: !monthly
-  }];
+  const barColors = values.map((value) => (value >= 0 ? up : down));
+  const datasets = monthly
+    ? [{
+      label: 'Month',
+      data: values,
+      backgroundColor: barColors,
+      hoverBackgroundColor: barColors,
+      borderWidth: 0,
+      borderRadius: 2,
+      maxBarThickness: 28,
+      order: 1,
+    }]
+    : [{
+      label: 'Return',
+      data: values,
+      borderColor: line,
+      backgroundColor: fill,
+      borderWidth: 2,
+      pointRadius: values.length > 1 ? 0 : 4,
+      pointHoverRadius: 4,
+      tension: 0,
+      fill: true,
+    }];
   if (monthly && headline != null) {
     datasets.push({
+      type: 'line',
       label: 'Average',
       data: values.map(() => headline),
       borderColor: '#9ca3af',
@@ -366,12 +381,13 @@ function displayRoiChart(data) {
       borderWidth: 1,
       pointRadius: 0,
       pointHoverRadius: 0,
-      fill: false
+      fill: false,
+      order: 0,
     });
   }
 
   roiChart = new Chart(canvas, {
-    type: 'line',
+    type: monthly ? 'bar' : 'line',
     data: { labels, datasets },
     options: {
       responsive: true,
@@ -410,6 +426,10 @@ function displayRoiChart(data) {
         },
         y: {
           afterDataLimits: function(scale) {
+            if (monthly) {
+              scale.min = Math.min(scale.min, 0);
+              scale.max = Math.max(scale.max, 0);
+            }
             const span = (scale.max - scale.min) || Math.abs(scale.max) || 1;
             const pad = span * 0.08;
             if (scale.min >= 0) {
@@ -417,7 +437,11 @@ function displayRoiChart(data) {
             } else {
               scale.min -= pad;
             }
-            scale.max += pad;
+            if (monthly && scale.max <= 0) {
+              scale.max = 0;
+            } else {
+              scale.max += pad;
+            }
           },
           ticks: {
             maxTicksLimit: 5,

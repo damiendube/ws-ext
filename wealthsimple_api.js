@@ -81,6 +81,111 @@ class WealthsimpleAPIBase {
     'FetchInstitutionalTransfer': "query FetchInstitutionalTransfer($id: ID!) {\n  accountTransfer(id: $id) {\n    ...InstitutionalTransfer\n    __typename\n  }\n}\n\nfragment InstitutionalTransfer on InstitutionalTransfer {\n  id\n  accountId: account_id\n  state\n  documentId: document_id\n  documentType: document_type\n  expectedCompletionDate: expected_completion_date\n  timelineExpectation: timeline_expectation {\n    lowerBound: lower_bound\n    upperBound: upper_bound\n    __typename\n  }\n  estimatedCompletionMaximum: estimated_completion_maximum\n  estimatedCompletionMinimum: estimated_completion_minimum\n  institutionName: institution_name\n  transferStatus: external_state\n  redactedInstitutionAccountNumber: redacted_institution_account_number\n  expectedValue: expected_value\n  transferType: transfer_type\n  cancellable\n  pdfUrl: pdf_url\n  clientVisibleState: client_visible_state\n  shortStatusDescription: short_status_description\n  longStatusDescription: long_status_description\n  progressPercentage: progress_percentage\n  type\n  rolloverType: rollover_type\n  autoSignatureEligible: auto_signature_eligible\n  parentInstitution: parent_institution {\n    id\n    name\n    __typename\n  }\n  stateHistories: state_histories {\n    id\n    state\n    notes\n    transitionSubmittedBy: transition_submitted_by\n    transitionedAt: transitioned_at\n    transitionCode: transition_code\n    __typename\n  }\n  transferFeeReimbursement: transfer_fee_reimbursement {\n    id\n    feeAmount: fee_amount\n    __typename\n  }\n  docusignSentViaEmail: docusign_sent_via_email\n  clientAccountType: client_account_type\n  primaryClientIdentityId: primary_client_identity_id\n  primaryOwnerSigned: primary_owner_signed\n  secondaryOwnerSigned: secondary_owner_signed\n  __typename\n}",
     'FetchAccountHistoricalFinancials': "query FetchAccountHistoricalFinancials($id: ID!, $currency: Currency!, $startDate: Date, $resolution: DateResolution!, $endDate: Date, $first: Int, $cursor: String) {\n          account(id: $id) {\n            id\n            financials {\n              historicalDaily(\n                currency: $currency\n                startDate: $startDate\n                resolution: $resolution\n                endDate: $endDate\n                first: $first\n                after: $cursor\n              ) {\n                edges {\n                  node {\n                    ...AccountHistoricalFinancials\n                    __typename\n                  }\n                  __typename\n                }\n                pageInfo {\n                  hasNextPage\n                  endCursor\n                  __typename\n                }\n                __typename\n              }\n              __typename\n            }\n            __typename\n          }\n        }\n\n        fragment AccountHistoricalFinancials on AccountHistoricalDailyFinancials {\n          date\n          netLiquidationValueV2 {\n            ...Money\n            __typename\n          }\n          netDepositsV2 {\n            ...Money\n            __typename\n          }\n          __typename\n        }\n\n        fragment Money on Money {\n          amount\n          cents\n          currency\n          __typename\n        }",
     'FetchIdentityHistoricalFinancials': "query FetchIdentityHistoricalFinancials($identityId: ID!, $currency: Currency!, $startDate: Date, $endDate: Date, $first: Int, $cursor: String, $accountIds: [ID!]) {\n      identity(id: $identityId) {\n        id\n        financials(filter: {accounts: $accountIds}) {\n          historicalDaily(\n            currency: $currency\n            startDate: $startDate\n            endDate: $endDate\n            first: $first\n            after: $cursor\n          ) {\n            edges {\n              node {\n                ...IdentityHistoricalFinancials\n                __typename\n              }\n              __typename\n            }\n            pageInfo {\n              hasNextPage\n              endCursor\n              __typename\n            }\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n    }\n\n    fragment IdentityHistoricalFinancials on IdentityHistoricalDailyFinancials {\n      date\n      netLiquidationValueV2 {\n        amount\n        currency\n        __typename\n      }\n      netDepositsV2 {\n        amount\n        currency\n        __typename\n      }\n      __typename\n    }",
+    'FetchIdentityPositions': `query FetchIdentityPositions($identityId: ID!, $currency: Currency!, $first: Int, $cursor: String, $accountIds: [ID!], $aggregated: Boolean, $currencyOverride: CurrencyOverride, $filter: PositionFilter, $includeSecurity: Boolean = false, $includeAccountData: Boolean = false) {
+      identity(id: $identityId) {
+        id
+        financials(filter: {accounts: $accountIds}) {
+          current(currency: $currency) {
+            id
+            positions(first: $first, after: $cursor, aggregated: $aggregated, filter: $filter) {
+              edges {
+                node {
+                  id
+                  quantity
+                  percentageOfAccount
+                  accounts @include(if: $includeAccountData) {
+                    id
+                    __typename
+                  }
+                  totalValue(currencyOverride: $currencyOverride) {
+                    amount
+                    currency
+                    __typename
+                  }
+                  security {
+                    id
+                    securityType
+                    currency
+                    stock @include(if: $includeSecurity) {
+                      name
+                      symbol
+                      primaryExchange
+                      primaryMic
+                      __typename
+                    }
+                    __typename
+                  }
+                  __typename
+                }
+                __typename
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
+    }`,
+    'FetchAccountManagedHoldings': `query FetchAccountManagedHoldings($id: ID!, $currency: Currency!) {
+      account(id: $id) {
+        id
+        financials {
+          current(currency: $currency) {
+            id
+            positions(filter: {includeCash: true, includeManaged: true}) {
+              edges {
+                node {
+                  id
+                  percentageOfAccount
+                  quantity
+                  totalValue {
+                    amount
+                    currency
+                  }
+                  security {
+                    id
+                    securityType
+                    assetClass
+                    stock {
+                      name
+                      symbol
+                      primaryExchange
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        targetPortfolioV2 {
+          id
+          assetClassAllocations: asset_class_allocations {
+            allocation
+            preferred_security_id
+            target_portfolio_asset_class {
+              id
+              key
+              category
+              securitiesV2 {
+                id
+                stock {
+                  name
+                  symbol
+                  primaryExchange
+                }
+              }
+            }
+          }
+        }
+      }
+    }`,
     'FetchCorporateActionChildActivities': "query FetchCorporateActionChildActivities($activityCanonicalId: String!) {\n  corporateActionChildActivities(\n    condition: {activityCanonicalId: $activityCanonicalId}\n  ) {\n    nodes {\n      ...CorporateActionChildActivity\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment CorporateActionChildActivity on CorporateActionChildActivity {\n  canonicalId\n  activityCanonicalId\n  assetName\n  assetSymbol\n  assetType\n  entitlementType\n  quantity\n  currency\n  price\n  recordDate\n  __typename\n}",
     'FetchBrokerageMonthlyStatementTransactions': "query FetchBrokerageMonthlyStatementTransactions($period: String!, $accountId: String!) {\n  brokerageMonthlyStatements(period: $period, accountId: $accountId) {\n    id\n    statementType\n    createdAt\n    data {\n      ... on BrokerageMonthlyStatementObject {\n        ...BrokerageMonthlyStatementObject\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment BrokerageMonthlyStatementObject on BrokerageMonthlyStatementObject {\n  custodianAccountId\n  activitiesPerCurrency {\n    currency\n    currentTransactions {\n      ...BrokerageMonthlyStatementTransactions\n      __typename\n    }\n    __typename\n  }\n  currentTransactions {\n    ...BrokerageMonthlyStatementTransactions\n    __typename\n  }\n  isMultiCurrency\n  __typename\n}\n\nfragment BrokerageMonthlyStatementTransactions on BrokerageMonthlyStatementTransactions {\n  balance\n  cashMovement\n  unit\n  description\n  transactionDate\n  transactionType\n  __typename\n}",
   };
@@ -186,7 +291,7 @@ class WealthsimpleAPIBase {
     );
   }
 
-  async do_graphql_query(query_name, variables, data_response_path, expect_type, filter_fn = null, load_all_pages = false) {
+  async do_graphql_query(query_name, variables, data_response_path, expect_type, filter_fn = null, load_all_pages = false, profile = 'trade') {
     if (!this.initialized) {
       await this.get_token_info();
     }
@@ -198,7 +303,7 @@ class WealthsimpleAPIBase {
     };
 
     const headers = {
-      "x-ws-profile": "trade",
+      "x-ws-profile": profile,
       "x-ws-api-version": WealthsimpleAPIBase.GRAPHQL_VERSION,
       "x-ws-locale": "en-CA",
       "x-platform-os": "web",
@@ -260,7 +365,7 @@ class WealthsimpleAPIBase {
       }
       if (end_cursor) {
         variables.cursor = end_cursor;
-        const more_data = await this.do_graphql_query(query_name, variables, data_response_path, expect_type, filter_fn, true);
+        const more_data = await this.do_graphql_query(query_name, variables, data_response_path, expect_type, filter_fn, true, profile);
         if (Array.isArray(data) && Array.isArray(more_data)) {
           data = data.concat(more_data);
         }
@@ -423,7 +528,7 @@ class WealthsimpleAPI extends WealthsimpleAPIBase {
     );
   }
 
-  async get_identity_historical_financials(account_ids = null, currency = 'CAD', start_date = null, end_date = null, first = null, cursor = null) {
+  async get_identity_historical_financials(account_ids = null, currency = 'CAD', start_date = null, end_date = null, first = null, cursor = null, load_all = false) {
     if (!this.initialized) {
       await this.get_token_info();
     }
@@ -441,6 +546,57 @@ class WealthsimpleAPI extends WealthsimpleAPIBase {
       },
       'identity.financials.historicalDaily.edges',
       'array',
+      null,
+      load_all,
+    );
+  }
+
+  async get_identity_positions(account_ids = null, currency = 'CAD', profile = 'trade') {
+    if (!this.initialized) {
+      await this.get_token_info();
+    }
+
+    const baseVariables = {
+      identityId: this.session.identity_canonical_id,
+      currency: currency,
+      accountIds: account_ids && account_ids.length ? account_ids : null,
+      filter: null,
+      first: 100,
+      aggregated: false,
+      includeSecurity: true,
+      includeAccountData: true,
+      cursor: null,
+    };
+
+    const run = (currencyOverride) => this.do_graphql_query(
+      'FetchIdentityPositions',
+      { ...baseVariables, currencyOverride: currencyOverride },
+      'identity.financials.current.positions.edges',
+      'array',
+      null,
+      true,
+      profile,
+    );
+
+    try {
+      return await run(currency);
+    } catch (error) {
+      return await run(null);
+    }
+  }
+
+  async get_managed_account_holdings(account_id, currency = 'CAD', profile = 'trade') {
+    if (!this.initialized) {
+      await this.get_token_info();
+    }
+    return this.do_graphql_query(
+      'FetchAccountManagedHoldings',
+      { id: account_id, currency },
+      'account',
+      'object',
+      null,
+      false,
+      profile,
     );
   }
 

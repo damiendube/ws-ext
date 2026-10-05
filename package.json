@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Chrome extension for advanced ROI graphs on Wealthsimple accounts",
   "scripts": {
-    "build": "rm -rf dist && mkdir dist && cp manifest.json background.js popup.html popup.css popup.js wealthsimple_api.js LICENSE NOTICE dist/ && cp -R icons dist/ && cp node_modules/chart.js/dist/chart.umd.js dist/chart.js",
+    "build": "rm -rf dist && mkdir dist && cp manifest.json background.js popup.html popup.css popup.js wealthsimple_api.js country_exposure.js LICENSE NOTICE dist/ && cp -R icons dist/ && cp node_modules/chart.js/dist/chart.umd.js dist/chart.js",
     "package": "npm run build && cd dist && zip -r ../wealthsimple-roi-analyzer.zip ."
   },
   "dependencies": {

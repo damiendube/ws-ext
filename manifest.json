@@ -10,7 +10,16 @@
   ],
   "host_permissions": [
     "https://wealthsimple.com/*",
-    "https://*.wealthsimple.com/*"
+    "https://*.wealthsimple.com/*",
+    "https://www.blackrock.com/*",
+    "https://www.ishares.com/*",
+    "https://www.vanguard.ca/*",
+    "https://investor.vanguard.com/*",
+    "https://www.bmogam.com/*",
+    "https://www.globalx.ca/*",
+    "https://fc.yahoo.com/*",
+    "https://query1.finance.yahoo.com/*",
+    "https://query2.finance.yahoo.com/*"
   ],
   "background": {
     "service_worker": "background.js"

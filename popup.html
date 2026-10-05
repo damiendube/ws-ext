@@ -17,15 +17,6 @@
             <option value="">Loading accounts...</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="periodSelect">Period:</label>
-          <select id="periodSelect" class="select-input">
-            <option value="1">Daily</option>
-            <option value="7">Weekly</option>
-            <option value="30" selected>Monthly</option>
-            <option value="364">Yearly</option>
-          </select>
-        </div>
         <button id="fetchData" class="btn btn-primary btn-small">Fetch</button>
       </div>
       
@@ -34,8 +25,45 @@
         <p>Loading data...</p>
       </div>
       
-      <div id="chartContainer" class="chart-container hidden">
-        <canvas id="roiChart"></canvas>
+      <div id="charts" class="charts hidden">
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2>Return on investment</h2>
+              <div class="type-row">
+                <select id="returnType" class="return-type" aria-label="Return type">
+                  <option value="cumulative">All-time return</option>
+                  <option value="monthly">Monthly average</option>
+                </select>
+                <p id="roiRangeLabel" class="range-caption">All time</p>
+              </div>
+            </div>
+            <span id="roiLatest" class="stat"></span>
+          </div>
+          <div class="plot plot-roi"><canvas id="roiChart"></canvas></div>
+          <div class="ranges" id="roiRanges">
+            <button type="button" class="range-btn" data-range="1D">1D</button>
+            <button type="button" class="range-btn" data-range="1W">1W</button>
+            <button type="button" class="range-btn" data-range="1M">1M</button>
+            <button type="button" class="range-btn" data-range="3M">3M</button>
+            <button type="button" class="range-btn" data-range="6M">6M</button>
+            <button type="button" class="range-btn" data-range="YTD">YTD</button>
+            <button type="button" class="range-btn" data-range="1Y">1Y</button>
+            <button type="button" class="range-btn active" data-range="ALL">ALL</button>
+          </div>
+        </section>
+        <div class="split-row">
+          <section class="card card-asset">
+            <h2>Allocation</h2>
+            <div class="plot plot-asset"><canvas id="assetChart"></canvas></div>
+            <p id="allocationNote" class="chart-note"></p>
+          </section>
+          <section class="card card-country">
+            <h2>Countries</h2>
+            <div class="plot plot-country"><canvas id="countryChart"></canvas></div>
+            <p id="countryNote" class="chart-note"></p>
+          </section>
+        </div>
       </div>
       
       <div id="error" class="error hidden"></div>
